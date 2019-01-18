@@ -4,7 +4,6 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
 import Item from '@/components/Item'
 export default {
   name: 'New',
@@ -14,24 +13,13 @@ export default {
   data: function () {
     return {
       err: '',
-      stories: []
+      stories: this.$store.state.newStories
     }
   },
   created: function () {
-    axios.get('https://hacker-news.firebaseio.com/v0/newstories.json')
-      .then((result) => {
-        this.results = result.data.slice(0, 25)
-        this.results.forEach(element => {
-          axios.get('https://hacker-news.firebaseio.com/v0/item/' + element + '.json')
-            .then((result) => {
-              this.stories.push(result)
-            })
-            .catch((err) => {
-              console.log(err)
-            })
-        })
-      })
-      .catch((err) => { this.err = err })
+    if (this.$store.state.newStories.length === 0) {
+      this.$store.dispatch('fetch_new_stories')
+    }
   }
 }
 </script>
